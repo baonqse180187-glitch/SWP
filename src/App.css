@@ -1,0 +1,78 @@
+/* Custom styles for EV Warranty System */
+.main-content {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.nav-link {
+  color: rgba(255,255,255,0.8);
+  border-radius: 10px;
+  margin: 5px 0;
+  transition: all 0.3s;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: white;
+  background: rgba(255,255,255,0.2);
+  transform: translateX(5px);
+}
+
+.card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 25px;
+  padding: 10px 30px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.badge {
+  border-radius: 20px;
+  padding: 8px 15px;
+}
+
+.form-control, .form-select {
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.login-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.login-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
