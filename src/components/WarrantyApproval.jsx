@@ -11,6 +11,10 @@ const WarrantyApproval = () => {
     dateTo: ''
   });
 
+  // thêm state cho modal lịch sử
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [historySc, setHistorySc] = useState('');
+
   useEffect(() => {
     // Mock data - Yêu cầu bảo hành từ các SC
     setClaims([
@@ -112,15 +116,15 @@ const WarrantyApproval = () => {
   };
 
   const handleApproveClaim = (claimId, approved, notes = '') => {
-    setClaims(claims.map(claim => 
-      claim.id === claimId 
-        ? { 
-            ...claim, 
-            status: approved ? 'approved' : 'rejected',
-            approvalNotes: notes,
-            approvedAt: new Date().toISOString().slice(0, 10),
-            approvedBy: 'evm_staff'
-          }
+    setClaims(claims.map(claim =>
+      claim.id === claimId
+        ? {
+          ...claim,
+          status: approved ? 'approved' : 'rejected',
+          approvalNotes: notes,
+          approvedAt: new Date().toISOString().slice(0, 10),
+          approvedBy: 'evm_staff'
+        }
         : claim
     ));
   };
@@ -128,6 +132,12 @@ const WarrantyApproval = () => {
   const handleViewDetail = (claim) => {
     setSelectedClaim(claim);
     setShowDetailModal(true);
+  };
+
+  // hàm mở modal lịch sử theo tên SC
+  const handleViewHistory = (scName) => {
+    setHistorySc(scName);
+    setShowHistoryModal(true);
   };
 
   const filteredClaims = claims.filter(claim => {
@@ -193,10 +203,10 @@ const WarrantyApproval = () => {
       {/* Filters */}
       <div className="row mb-3">
         <div className="col-md-3">
-          <select 
+          <select
             className="form-select"
             value={filters.status}
-            onChange={(e) => setFilters({...filters, status: e.target.value})}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
           >
             <option value="">Tất cả trạng thái</option>
             <option value="pending_approval">Chờ duyệt</option>
@@ -206,10 +216,10 @@ const WarrantyApproval = () => {
           </select>
         </div>
         <div className="col-md-3">
-          <select 
+          <select
             className="form-select"
             value={filters.priority}
-            onChange={(e) => setFilters({...filters, priority: e.target.value})}
+            onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
           >
             <option value="">Tất cả độ ưu tiên</option>
             <option value="high">Cao</option>
@@ -218,27 +228,27 @@ const WarrantyApproval = () => {
           </select>
         </div>
         <div className="col-md-2">
-          <input 
-            type="date" 
+          <input
+            type="date"
             className="form-control"
             value={filters.dateFrom}
-            onChange={(e) => setFilters({...filters, dateFrom: e.target.value})}
+            onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
             placeholder="Từ ngày"
           />
         </div>
         <div className="col-md-2">
-          <input 
-            type="date" 
+          <input
+            type="date"
             className="form-control"
             value={filters.dateTo}
-            onChange={(e) => setFilters({...filters, dateTo: e.target.value})}
+            onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
             placeholder="Đến ngày"
           />
         </div>
         <div className="col-md-2">
-          <button 
+          <button
             className="btn btn-outline-secondary w-100"
-            onClick={() => setFilters({status: '', priority: '', dateFrom: '', dateTo: ''})}
+            onClick={() => setFilters({ status: '', priority: '', dateFrom: '', dateTo: '' })}
           >
             <i className="fas fa-times"></i> Xóa lọc
           </button>
@@ -300,24 +310,24 @@ const WarrantyApproval = () => {
                     </td>
                     <td>
                       <div className="btn-group" role="group">
-                        <button 
+                        <button
                           className="btn btn-sm btn-outline-primary"
                           onClick={() => handleViewDetail(claim)}
                           title="Xem chi tiết"
                         >
                           <i className="fas fa-eye"></i>
                         </button>
-                        
+
                         {claim.status === 'pending_approval' && (
                           <>
-                            <button 
+                            <button
                               className="btn btn-sm btn-success"
                               onClick={() => handleApproveClaim(claim.id, true)}
                               title="Duyệt"
                             >
                               <i className="fas fa-check"></i>
                             </button>
-                            <button 
+                            <button
                               className="btn btn-sm btn-danger"
                               onClick={() => handleApproveClaim(claim.id, false)}
                               title="Từ chối"
@@ -326,6 +336,15 @@ const WarrantyApproval = () => {
                             </button>
                           </>
                         )}
+
+                        {/* Nút mở lịch sử bảo hành của SC */}
+                        <button
+                          className="btn btn-sm btn-outline-secondary"
+                          onClick={() => handleViewHistory(claim.scName)}
+                          title="Lịch sử bảo hành SC"
+                        >
+                          <i className="fas fa-history"></i>
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -343,8 +362,8 @@ const WarrantyApproval = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Chi tiết yêu cầu bảo hành - {selectedClaim.id}</h5>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn-close"
                   onClick={() => setShowDetailModal(false)}
                 ></button>
@@ -426,8 +445,8 @@ const WarrantyApproval = () => {
                 )}
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-secondary"
                   onClick={() => setShowDetailModal(false)}
                 >
@@ -435,8 +454,8 @@ const WarrantyApproval = () => {
                 </button>
                 {selectedClaim.status === 'pending_approval' && (
                   <>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="btn btn-success"
                       onClick={() => {
                         handleApproveClaim(selectedClaim.id, true);
@@ -445,8 +464,8 @@ const WarrantyApproval = () => {
                     >
                       <i className="fas fa-check me-2"></i>Duyệt
                     </button>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="btn btn-danger"
                       onClick={() => {
                         handleApproveClaim(selectedClaim.id, false);
@@ -457,6 +476,66 @@ const WarrantyApproval = () => {
                     </button>
                   </>
                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal lịch sử bảo hành của SC */}
+      {showHistoryModal && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Lịch sử bảo hành - {historySc}</h5>
+                <button type="button" className="btn-close" onClick={() => setShowHistoryModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <p className="text-muted">Hiển thị tất cả yêu cầu bảo hành đã ghi nhận cho nhân viên trung tâm: <strong>{historySc}</strong></p>
+                <div className="table-responsive">
+                  <table className="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Mã</th>
+                        <th>Ngày</th>
+                        <th>Khách hàng</th>
+                        <th>Model</th>
+                        <th>Chi phí</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {claims
+                        .filter(c => c.scName === historySc)
+                        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+                        .map((c) => (
+                          <tr key={c.id}>
+                            <td><code>{c.id}</code></td>
+                            <td>{c.createdAt}</td>
+                            <td>{c.customerName}</td>
+                            <td>{c.model}</td>
+                            <td>{(c.actualCost || c.estimatedCost).toLocaleString()} VNĐ</td>
+                            <td><span className={`badge ${getStatusBadge(c.status)}`}>{getStatusText(c.status)}</span></td>
+                            <td>
+                              <button className="btn btn-sm btn-outline-primary" onClick={() => { handleViewDetail(c); setShowHistoryModal(false); }}>
+                                Xem
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      {claims.filter(c => c.scName === historySc).length === 0 && (
+                        <tr>
+                          <td colSpan="7" className="text-center text-muted">Chưa có yêu cầu bảo hành</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => setShowHistoryModal(false)}>Đóng</button>
               </div>
             </div>
           </div>

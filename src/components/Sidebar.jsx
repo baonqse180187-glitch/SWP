@@ -3,7 +3,9 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Sidebar = () => {
-  const { user, logout } = useAuth();
+  const auth = useAuth();
+  const user = auth?.user;
+  const logout = auth?.logout || (() => { });
 
   // Danh sách menu, thêm menu EVM
   const menuItems = [
@@ -16,27 +18,54 @@ const Sidebar = () => {
     { path: '/evm', icon: 'fas fa-bolt', label: 'EVM', roles: ['admin', 'evm_staff'] }
   ];
 
-  // Lọc menu theo role
+  const role = user?.role || 'guest';
   const filteredMenuItems = menuItems.filter(item =>
-    item.roles.includes(user?.role) || user?.role === 'admin'
+    item.roles.includes(role) || role === 'admin'
   );
 
+  const getInitials = (name = '') => {
+    return name.split(' ').map(s => s[0]).slice(0, 2).join('').toUpperCase() || 'U';
+  };
+
   return (
-    <nav className="col-md-3 col-lg-2 d-md-block sidebar px-3 py-4">
+    <nav className="col-md-3 col-lg-2 d-md-block sidebar bg-dark text-white px-3 py-4" style={{ minHeight: '100vh', position: 'sticky', top: 0 }}>
       <div className="sidebar-sticky">
+        <div className="d-flex align-items-center mb-4">
+          <div className="me-2" style={{ width: 42, height: 42 }}>
+            <div className="bg-primary rounded-circle d-flex justify-content-center align-items-center text-white fw-bold" style={{ width: 42, height: 42 }}>
+              {getInitials(user?.name || user?.username)}
+            </div>
+          </div>
+          <div>
+            <div className="fw-bold">{user?.name || user?.username || 'Người dùng'}</div>
+            <small className="text-muted">{user?.role || 'guest'}</small>
+          </div>
+        </div>
+
         <ul className="nav flex-column">
-          {filteredMenuItems.map(item => (
+          {filteredMenuItems.length > 0 ? filteredMenuItems.map(item => (
             <li className="nav-item" key={item.path}>
-              <NavLink to={item.path} className="nav-link">
-                <i className={`${item.icon} me-2`}></i>{item.label}
+              <NavLink
+                to={item.path}
+                end
+                className={({ isActive }) => `nav-link d-flex align-items-center text-white ${isActive ? 'bg-light bg-opacity-10 rounded' : 'text-white-75'}`}
+                style={{ padding: '.5rem .75rem' }}
+              >
+                <i className={`${item.icon} me-2`}></i>
+                <span>{item.label}</span>
               </NavLink>
             </li>
-          ))}
+          )) : (
+            <li className="nav-item">
+              <div className="nav-link text-muted">Không có menu</div>
+            </li>
+          )}
+
           <li className="nav-item mt-4">
             <button
-              className="nav-link btn btn-link text-start w-100"
-              style={{ color: 'rgba(255,255,255,0.8)' }}
+              className="btn btn-outline-light w-100 text-start"
               onClick={logout}
+              title="Đăng xuất"
             >
               <i className="fas fa-sign-out-alt me-2"></i>Đăng xuất
             </button>
