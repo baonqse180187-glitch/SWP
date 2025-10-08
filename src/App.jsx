@@ -1,75 +1,89 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-import VehicleManagement from './components/VehicleManagement';
-import WarrantyClaims from './components/WarrantyClaims';
-import RecallManagement from './components/RecallManagement';
-import Reports from './components/Reports';
-import Sidebar from './components/Sidebar';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+// Components
+import Layout from './components/Layout/Layout'
+import LoginPage from './pages/LoginPage'
+import HomePage from './pages/HomePage'
+import CustomerManagement from './pages/CustomerManagement'
+import WarrantyRequest from './pages/WarrantyRequest'
+import WarrantyAssignment from './pages/WarrantyAssignment'
+import WarrantyExecution from './pages/WarrantyExecution'
 
-function AppContent() {
-  const { user, loading } = useAuth();
+// Auth Context
+import { AuthProvider, useAuth } from './contexts/AuthContext'
 
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+})
+
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth()
+  
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
       </div>
-    );
+    )
   }
-
+  
   if (!user) {
-    return <Login />;
+    return <Navigate to="/login" replace />
   }
+  
+  return children
+}
+
+function AppRoutes() {
+  const { user } = useAuth()
 
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <Sidebar />
-        <main className="col-md-9 col-lg-10 main-content p-4">
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/vehicles" element={<VehicleManagement />} />
-            <Route path="/claims" element={<WarrantyClaims />} />
-            <Route path="/recalls" element={<RecallManagement />} />
-            <Route path="/reports" element={<Reports />} />
-          </Routes>
-        </main>
-      </div>
-    </div>
-  );
+    <Routes>
+      <Route 
+        path="/login" 
+        element={!user ? <LoginPage /> : <Navigate to="/" replace />} 
+      />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<HomePage />} />
+        <Route path="customer-management" element={<CustomerManagement />} />
+        <Route path="warranty-request" element={<WarrantyRequest />} />
+        <Route path="warranty-assignment" element={<WarrantyAssignment />} />
+        <Route path="warranty-execution" element={<WarrantyExecution />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
 }
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="App">
-          <AppContent />
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-        </div>
-      </Router>
-    </AuthProvider>
-  );
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <div className="App">
+            <AppRoutes />
+          </div>
+        </Router>
+      </AuthProvider>
+    </QueryClientProvider>
+  )
 }
 
-export default App;
+export default App

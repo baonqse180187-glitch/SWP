@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 50px;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .title {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .status {
+            background: #28a745;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        .links {
+            margin-top: 40px;
+        }
+
+        .link {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background 0.3s;
+        }
+
+        .link:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="title">🚗 OEM System Debug</h1>
+        <p class="subtitle">Nếu bạn thấy trang này, có nghĩa là server đang hoạt động bình thường</p>
+
+        <div class="status">✅ Server Status: RUNNING</div>
+
+        <div>
+            <h3>Test Information:</h3>
+            <p><strong>Server URL:</strong> http://localhost:5175</p>
+            <p><strong>Current Time:</strong> <span id="currentTime"></span></p>
+            <p><strong>Browser:</strong> <span id="userAgent"></span></p>
+        </div>
+
+        <div class="links">
+            <a href="/" class="link">🔄 Reload React App</a>
+            <a href="/test.html" class="link">🧪 This Test Page</a>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <h3>Troubleshooting Steps:</h3>
+            <ol style="text-align: left; max-width: 400px; margin: 0 auto;">
+                <li>Clear browser cache (Ctrl + F5)</li>
+                <li>Try incognito/private mode</li>
+                <li>Check browser console for errors (F12)</li>
+                <li>Verify React app is loading</li>
+                <li>Check network tab for failed requests</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+
+        // Auto refresh every 5 seconds to show server is alive
+        setInterval(() => {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        }, 5000);
+    </script>
+</body>
+
+</html>
