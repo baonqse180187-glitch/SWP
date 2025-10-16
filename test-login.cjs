@@ -16,7 +16,7 @@ async function testLogin() {
         console.log('Response data:', JSON.stringify(data, null, 2));
 
         if (data.success && data.data.token) {
-            console.log('\n✅ JWT Token:', data.data.token);
+            console.log(data.data.token);
 
             // Test protected endpoint
             const vehiclesResponse = await fetch('http://localhost:3001/api/vehicles', {
@@ -26,7 +26,7 @@ async function testLogin() {
             });
 
             const vehiclesData = await vehiclesResponse.json();
-            console.log('\n🚗 Protected endpoint test:', vehiclesData);
+            console.log(vehiclesData);
         }
     } catch (error) {
         console.error('Error:', error.message);

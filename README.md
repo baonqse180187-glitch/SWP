@@ -37,7 +37,7 @@ Hệ thống quản lý trung tâm bảo hành xe điện OEM với đầy đủ
 - **Styling**: Tailwind CSS
 - **State Management**: React Query + Context API
 - **Routing**: React Router v6
-- **HTTP Client**: Axios
+- **HTTP Client**: fetch
 - **Form Handling**: React Hook Form
 - **Icons**: Custom SVG Components
 - **Charts**: Recharts (tùy chọn)
@@ -98,9 +98,6 @@ src/
 │   └── WarrantyExecution.jsx
 ├── services/           # API services
 │   └── api.js         # API configuration và endpoints
-├── utils/              # Utility functions
-│   ├── constants.js   # Hằng số ứng dụng
-│   └── helpers.js     # Helper functions
 ├── App.jsx            # Main app component
 ├── main.jsx           # Entry point
 └── index.css          # Global styles
@@ -114,17 +111,22 @@ Hệ thống hỗ trợ 3 loại người dùng:
    - Quản lý khách hàng
    - Phân công bảo hành
 
-2. **SC_TECHNICIAN** (Kỹ thuật viên)
+2.  **EVM_STAFF** (Nhân viên hãng)
+   - Quản lý xác nhận đơn
+   - Quản lý phân công bảo hành
+
+3. **SC_TECHNICIAN** (Kỹ thuật viên)
    - Tạo yêu cầu bảo hành
    - Thực hiện bảo hành
 
-3. **ADMIN** (Quản trị viên)
+4. **ADMIN** (Quản trị viên)
    - Toàn bộ quyền hạn
+   - Tạo account cho nhân viên
 
 ### Demo Accounts:
-- **Staff**: `staff` / `password123`
-- **Technician**: `technician` / `password123`
-- **Admin**: `admin` / `password123`
+- **Staff**:
+- **Technician**: 
+- **Admin**: 
 
 ## 🔌 API Integration
 
@@ -132,30 +134,14 @@ Frontend được thiết kế để kết nối với backend tại `http://loc
 
 ### Cấu trúc API endpoints:
 ```
-/api/auth/*           # Authentication
-/api/customers/*      # Customer management
-/api/vehicles/*       # Vehicle management  
-/api/warranty/*       # Warranty requests
-/api/technicians/*    # Technician management
-/api/upload/*         # File uploads
+            "/api/auth/login",
+            "/api/auth/introspect",
+            "/api/users/forgot-password",
+            "/api/users/verify-otp",
+            "/api/users/reset-password",
+            "/api/service-centers",
+            "/api/service-centers/search"
 ```
-
-## 📱 Responsive Design
-
-Giao diện được thiết kế responsive, hoạt động tốt trên:
-- 💻 Desktop (1280px+)
-- 📱 Tablet (768px - 1279px)  
-- 📱 Mobile (320px - 767px)
-
-## 🎨 Theme & Styling
-
-- **Primary Color**: Navy Blue (#1E3A8A)
-- **Secondary Color**: Orange (#F59E0B)
-- **Success**: Green (#10B981)
-- **Warning**: Yellow (#F59E0B)
-- **Error**: Red (#EF4444)
-
-## 🚀 Deployment
 
 ### Build cho production:
 ```bash
@@ -168,12 +154,6 @@ npm run preview
 ```
 
 Files build sẽ được tạo trong thư mục `dist/`.
-
-## 🐛 Debugging
-
-1. **Kiểm tra Console**: Mở DevTools (F12) để xem lỗi
-2. **Network Tab**: Kiểm tra API calls
-3. **Test Page**: Truy cập `/test.html` để kiểm tra server
 
 ## 📄 Business Rules
 
@@ -194,17 +174,4 @@ Files build sẽ được tạo trong thư mục `dist/`.
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Mở Pull Request
 
-## 📞 Support
-
-Nếu gặp vấn đề, vui lòng:
-1. Kiểm tra Console logs
-2. Xem phần Debugging ở trên
-3. Liên hệ team phát triển
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-**OEM Warranty Center** - Hệ thống quản lý bảo hành xe điện chuyên nghiệp 🚗⚡
+**OEM Warranty Center** - Hệ thống quản lý bảo hành xe điện chuyên nghiệp
