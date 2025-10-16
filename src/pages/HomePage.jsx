@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { api } from '../services/api'
 import {
   ClipboardDocumentListIcon,
   UsersIcon,
@@ -136,7 +137,6 @@ const HomePage = () => {
     return modules
   }
 
-  // Thống kê nhanh (những thông tin này sẽ được lấy từ API trong quá trình triển khai thực tế)
   const quickStats = [
     {
       title: 'Yêu cầu bảo hành',
@@ -197,10 +197,37 @@ const HomePage = () => {
     }
   ]
 
+
+
+  const [data, setData] = useState([])
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await api.getVehicles()
+        setData(result.data || [])
+      } catch (error) {
+        console.error('Error fetching vehicles:', error)
+        setData([])
+      }
+    }
+    fetchData()
+  }, [])
+
+
+
   return (
-    <div className="space-y-6">
+
+
+    < div className="space-y-6" >
+
+      {
+        data.map((item) => (
+          <div key={item.vin}>{item.vin} - {item.owner}</div>
+        ))
+      }
+
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-8 text-white">
+      < div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-8 text-white" >
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">
@@ -221,10 +248,10 @@ const HomePage = () => {
             </p>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* Module Selection */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      < div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6" >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-900">Chọn chức năng</h2>
           <div className="text-sm text-gray-500">
@@ -257,41 +284,49 @@ const HomePage = () => {
         </div>
 
         {/* Role-based notifications - Updated */}
-        {isEVMAdmin && (
-          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-sm text-green-800">
-              <strong>EVM Admin:</strong> Chức năng cho Hãng sản xuất xe - Báo cáo & phân tích, quản lý cơ sở dữ liệu khách hàng và xe.
-            </p>
-          </div>
-        )}
+        {
+          isEVMAdmin && (
+            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-800">
+                <strong>EVM Admin:</strong> Chức năng cho Hãng sản xuất xe - Báo cáo & phân tích, quản lý cơ sở dữ liệu khách hàng và xe.
+              </p>
+            </div>
+          )
+        }
 
-        {isEVMStaff && (
-          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>EVM Staff:</strong> Quản lý sản phẩm & phụ tùng - Cơ sở dữ liệu phần EV, Gắn số seri phụ tùng với xe (VIN), Quản lý chính sách bảo hành, Quản lý yêu cầu bảo hành, Chuỗi cung ứng phụ tùng bảo hành.
-            </p>
-          </div>
-        )}
+        {
+          isEVMStaff && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                <strong>EVM Staff:</strong> Quản lý sản phẩm & phụ tùng - Cơ sở dữ liệu phần EV, Gắn số seri phụ tùng với xe (VIN), Quản lý chính sách bảo hành, Quản lý yêu cầu bảo hành, Chuỗi cung ứng phụ tùng bảo hành.
+              </p>
+            </div>
+          )
+        }
 
-        {isSCStaff && (
-          <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-            <p className="text-sm text-orange-800">
-              <strong>SC Staff:</strong> Quản lý hồ sơ xe (Tìm kiếm theo VIN, Đăng ký VIN mới), Tạo yêu cầu bảo hành gửi lên hãng duyệt, Phân công kỹ thuật viên.
-            </p>
-          </div>
-        )}
+        {
+          isSCStaff && (
+            <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+              <p className="text-sm text-orange-800">
+                <strong>SC Staff:</strong> Quản lý hồ sơ xe (Tìm kiếm theo VIN, Đăng ký VIN mới), Tạo yêu cầu bảo hành gửi lên hãng duyệt, Phân công kỹ thuật viên.
+              </p>
+            </div>
+          )
+        }
 
-        {isSCTechnician && (
-          <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
-            <p className="text-sm text-purple-800">
-              <strong>SC Technician:</strong> Chỉ thực hiện bảo hành - Nhận phụ tùng từ hãng, Quản lý tiến độ sửa chữa/thay thế phụ tùng, Cập nhật kết quả bảo hành và bàn giao xe.
-            </p>
-          </div>
-        )}
-      </div>
+        {
+          isSCTechnician && (
+            <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+              <p className="text-sm text-purple-800">
+                <strong>SC Technician:</strong> Chỉ thực hiện bảo hành - Nhận phụ tùng từ hãng, Quản lý tiến độ sửa chữa/thay thế phụ tùng, Cập nhật kết quả bảo hành và bàn giao xe.
+              </p>
+            </div>
+          )
+        }
+      </div >
 
       {/* Module Content */}
-      <div className="min-h-[600px]">
+      < div className="min-h-[600px]" >
         {activeModule === 'dashboard' && (
           <div className="space-y-6">
             {/* Quick Stats */}
@@ -346,8 +381,8 @@ const HomePage = () => {
         {activeModule === 'warranty-management' && <WarrantyManagement userRole={user?.role} />}
         {activeModule === 'warranty-assignment' && (isEVMAdmin || isEVMStaff || isSCStaff) && <WarrantyAssignment userRole={user?.role} />}
         {activeModule === 'repair-progress' && (isEVMAdmin || isEVMStaff || isSCStaff || isSCTechnician) && <RepairProgress userRole={user?.role} />}
-      </div>
-    </div>
+      </div >
+    </div >
   )
 }
 

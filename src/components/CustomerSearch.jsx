@@ -12,6 +12,7 @@ import {
     EnvelopeIcon
 } from '../components/Icons'
 import { useAuth } from '../contexts/AuthContext'
+import { api } from '../services/api'
 
 const CustomerSearch = () => {
     const { user, isSCStaff, isEVMStaff } = useAuth()
@@ -37,403 +38,41 @@ const CustomerSearch = () => {
         year: 'all' // all, 2023, 2024
     })
 
-    // Mock data sản phẩm cho EVM Staff
-    const mockProducts = [
-        {
-            id: 1,
-            code: 'VF8-BATTERY-001',
-            name: 'Pin Lithium VF8',
-            category: 'Pin xe điện',
-            manufacturer: 'VinFast',
-            warrantyPeriod: '8 năm',
-            price: 200000000,
-            stock: 50,
-            description: 'Pin lithium cho VinFast VF8'
-        },
-        {
-            id: 2,
-            code: 'VF9-MOTOR-001',
-            name: 'Motor điện VF9',
-            category: 'Động cơ điện',
-            manufacturer: 'VinFast',
-            warrantyPeriod: '5 năm',
-            price: 150000000,
-            stock: 30,
-            description: 'Motor điện cho VinFast VF9'
-        },
-        {
-            id: 3,
-            code: 'UNIVERSAL-CHARGER-001',
-            name: 'Bộ sạc di động',
-            category: 'Phụ kiện sạc',
-            manufacturer: 'VinFast',
-            warrantyPeriod: '2 năm',
-            price: 15000000,
-            stock: 100,
-            description: 'Bộ sạc di động cho tất cả dòng xe VinFast'
-        }
-    ]
+    // State để lưu data từ API
+    const [products, setProducts] = useState([])
+    const [customers, setCustomers] = useState([])
+    const [vehicleParts, setVehicleParts] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
 
-    // Mock data khách hàng
-    const mockCustomers = [
-        {
-            id: 1,
-            name: 'Nguyễn Văn A',
-            phone: '0123456789',
-            email: 'nguyenvana@email.com',
-            address: '123 Đường ABC, Quận 1, TP.HCM',
-            vehicles: [
-                {
-                    id: 1,
-                    licensePlate: '59A-12345',
-                    model: 'VinFast VF8',
-                    color: 'Đỏ',
-                    year: 2023,
-                    vin: 'VIN123456789ABCD',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2025-12-31',
-                    purchaseDate: '2023-01-15',
-                    dealership: 'VinFast Quận 1',
-                    warrantyHistory: [
-                        {
-                            id: 1,
-                            date: '2023-06-15',
-                            type: 'Thay pin',
-                            description: 'Thay thế pin do sụt điện áp',
-                            status: 'Hoàn thành',
-                            technician: 'Nguyễn Văn X',
-                            cost: 0
-                        },
-                        {
-                            id: 2,
-                            date: '2024-02-20',
-                            type: 'Bảo dưỡng định kỳ',
-                            description: 'Bảo dưỡng 10,000 km',
-                            status: 'Hoàn thành',
-                            technician: 'Trần Thị Y',
-                            cost: 0
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 2,
-            name: 'Trần Thị B',
-            phone: '0987654321',
-            email: 'tranthib@email.com',
-            address: '456 Đường XYZ, Quận 2, TP.HCM',
-            vehicles: [
-                {
-                    id: 2,
-                    licensePlate: '59B-67890',
-                    model: 'VinFast VF9',
-                    color: 'Xanh',
-                    year: 2023,
-                    vin: 'VIN987654321EFGH',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2025-06-15',
-                    purchaseDate: '2023-02-20',
-                    dealership: 'VinFast Quận 2',
-                    warrantyHistory: [
-                        {
-                            id: 1,
-                            date: '2023-08-10',
-                            type: 'Sửa chữa hệ thống điện',
-                            description: 'Thay thế cảm biến áp suất lốp',
-                            status: 'Hoàn thành',
-                            technician: 'Lê Minh Z',
-                            cost: 0
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 3,
-            name: 'Lê Minh C',
-            phone: '0912345678',
-            email: 'leminhc@gmail.com',
-            address: '789 Đường DEF, Quận 3, TP.HCM',
-            vehicles: [
-                {
-                    id: 3,
-                    licensePlate: '59C-11111',
-                    model: 'VinFast VF8',
-                    color: 'Trắng',
-                    year: 2023,
-                    vin: 'VIN111222333IJKL',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2026-03-10',
-                    purchaseDate: '2023-03-10',
-                    dealership: 'VinFast Quận 3',
-                    warrantyHistory: []
-                },
-                {
-                    id: 4,
-                    licensePlate: '59C-22222',
-                    model: 'VinFast VF9',
-                    color: 'Đen',
-                    year: 2024,
-                    vin: 'VIN444555666MNOP',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2026-08-25',
-                    purchaseDate: '2024-01-25',
-                    dealership: 'VinFast Quận 3',
-                    warrantyHistory: [
-                        {
-                            id: 1,
-                            date: '2024-05-15',
-                            type: 'Thay thế cảm biến',
-                            description: 'Thay cảm biến parktronic bị lỗi',
-                            status: 'Hoàn thành',
-                            technician: 'Phạm Văn K',
-                            cost: 0
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 4,
-            name: 'Phạm Thúy D',
-            phone: '0765432198',
-            email: 'phamthuyd@yahoo.com',
-            address: '321 Đường GHI, Quận 7, TP.HCM',
-            vehicles: [
-                {
-                    id: 5,
-                    licensePlate: '59D-33333',
-                    model: 'VinFast VF8',
-                    color: 'Xám',
-                    year: 2023,
-                    vin: 'VIN777888999QRST',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2025-11-30',
-                    purchaseDate: '2023-05-30',
-                    dealership: 'VinFast Quận 7',
-                    warrantyHistory: [
-                        {
-                            id: 1,
-                            date: '2023-09-12',
-                            type: 'Bảo dưỡng định kỳ',
-                            description: 'Bảo dưỡng 5,000 km đầu tiên',
-                            status: 'Hoàn thành',
-                            technician: 'Nguyễn Thị L',
-                            cost: 0
-                        },
-                        {
-                            id: 2,
-                            date: '2024-01-20',
-                            type: 'Sửa chữa điều hòa',
-                            description: 'Thay gas điều hòa bị rò rỉ',
-                            status: 'Hoàn thành',
-                            technician: 'Trần Văn M',
-                            cost: 0
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 5,
-            name: 'Hoàng Đức E',
-            phone: '0834567890',
-            email: 'hoangduce@outlook.com',
-            address: '654 Đường JKL, Quận 9, TP.HCM',
-            vehicles: [
-                {
-                    id: 6,
-                    licensePlate: '59E-44444',
-                    model: 'VinFast VF9',
-                    color: 'Xanh lá',
-                    year: 2024,
-                    vin: 'VIN000111222UVWX',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2027-02-14',
-                    purchaseDate: '2024-02-14',
-                    dealership: 'VinFast Quận 9',
-                    warrantyHistory: []
-                }
-            ]
-        },
-        {
-            id: 6,
-            name: 'Võ Thị F',
-            phone: '0923456789',
-            email: 'vothif@gmail.com',
-            address: '987 Đường MNO, Quận Bình Thạnh, TP.HCM',
-            vehicles: [
-                {
-                    id: 7,
-                    licensePlate: '59F-55555',
-                    model: 'VinFast VF8',
-                    color: 'Vàng',
-                    year: 2023,
-                    vin: 'VIN333444555YZAB',
-                    warrantyStatus: 'Hết bảo hành',
-                    warrantyExpiry: '2024-10-01',
-                    purchaseDate: '2022-10-01',
-                    dealership: 'VinFast Bình Thạnh',
-                    warrantyHistory: [
-                        {
-                            id: 1,
-                            date: '2023-03-10',
-                            type: 'Thay pin phụ',
-                            description: 'Thay pin 12V bị hỏng',
-                            status: 'Hoàn thành',
-                            technician: 'Lê Văn N',
-                            cost: 0
-                        },
-                        {
-                            id: 2,
-                            date: '2023-11-22',
-                            type: 'Sửa chữa màn hình',
-                            description: 'Thay màn hình trung tâm bị đen',
-                            status: 'Hoàn thành',
-                            technician: 'Nguyễn Thị O',
-                            cost: 0
-                        },
-                        {
-                            id: 3,
-                            date: '2024-09-15',
-                            type: 'Bảo dưỡng cuối kỳ BH',
-                            description: 'Bảo dưỡng tổng thể trước khi hết BH',
-                            status: 'Hoàn thành',
-                            technician: 'Trần Văn P',
-                            cost: 0
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            id: 7,
-            name: 'Đặng Quang G',
-            phone: '0856789012',
-            email: 'dangquangg@hotmail.com',
-            address: '147 Đường PQR, Quận Tân Bình, TP.HCM',
-            vehicles: [
-                {
-                    id: 8,
-                    licensePlate: '59G-66666',
-                    model: 'VinFast VF9',
-                    color: 'Bạc',
-                    year: 2024,
-                    vin: 'VIN666777888CDEF',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2026-07-18',
-                    purchaseDate: '2024-01-18',
-                    dealership: 'VinFast Tân Bình',
-                    warrantyHistory: []
-                }
-            ]
-        },
-        {
-            id: 8,
-            name: 'Bùi Thị H',
-            phone: '0945678901',
-            email: 'buithih@gmail.com',
-            address: '258 Đường STU, Quận Phú Nhuận, TP.HCM',
-            vehicles: [
-                {
-                    id: 9,
-                    licensePlate: '59H-77777',
-                    model: 'VinFast VF8',
-                    color: 'Tím',
-                    year: 2023,
-                    vin: 'VIN999000111GHIJ',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2025-09-22',
-                    purchaseDate: '2023-09-22',
-                    dealership: 'VinFast Phú Nhuận',
-                    warrantyHistory: []
-                }
-            ]
-        },
-        {
-            id: 9,
-            name: 'Ngô Minh I',
-            phone: '0712345678',
-            email: 'ngominhi@yahoo.com',
-            address: '369 Đường VWX, Quận Gò Vấp, TP.HCM',
-            vehicles: [
-                {
-                    id: 10,
-                    licensePlate: '59I-88888',
-                    model: 'VinFast VF9',
-                    color: 'Cam',
-                    year: 2024,
-                    vin: 'VIN222333444KLMN',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2026-12-05',
-                    purchaseDate: '2024-03-05',
-                    dealership: 'VinFast Gò Vấp',
-                    warrantyHistory: []
-                }
-            ]
-        },
-        {
-            id: 10,
-            name: 'Lý Thanh J',
-            phone: '0698765432',
-            email: 'lythanhj@outlook.com',
-            address: '741 Đường YZA, Quận Thủ Đức, TP.HCM',
-            vehicles: [
-                {
-                    id: 11,
-                    licensePlate: '59J-99999',
-                    model: 'VinFast VF8',
-                    color: 'Hồng',
-                    year: 2024,
-                    vin: 'VIN555666777OPQR',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2027-04-12',
-                    purchaseDate: '2024-04-12',
-                    dealership: 'VinFast Thủ Đức',
-                    warrantyHistory: []
-                },
-                {
-                    id: 12,
-                    licensePlate: '59J-00000',
-                    model: 'VinFast VF9',
-                    color: 'Xanh navy',
-                    year: 2024,
-                    vin: 'VIN888999000STUV',
-                    warrantyStatus: 'Còn bảo hành',
-                    warrantyExpiry: '2027-05-20',
-                    purchaseDate: '2024-05-20',
-                    dealership: 'VinFast Thủ Đức',
-                    warrantyHistory: []
-                }
-            ]
-        }
-    ]
-
-    // Mock data phụ tùng xe
-    const vehicleParts = [
-        { id: 1, name: 'Pin chính', category: 'Hệ thống điện' },
-        { id: 2, name: 'Motor trước', category: 'Động lực' },
-        { id: 3, name: 'Motor sau', category: 'Động lực' },
-        { id: 4, name: 'Bộ điều khiển BMS', category: 'Hệ thống điện' },
-        { id: 5, name: 'Màn hình trung tâm', category: 'Nội thất' },
-        { id: 6, name: 'Điều hòa', category: 'Tiện nghi' },
-        { id: 7, name: 'Cảm biến áp suất lốp', category: 'An toàn' },
-        { id: 8, name: 'Camera 360', category: 'An toàn' },
-        { id: 9, name: 'Đèn LED trước', category: 'Chiếu sáng' },
-        { id: 10, name: 'Đèn LED sau', category: 'Chiếu sáng' },
-        { id: 11, name: 'Cản trước', category: 'Thân vỏ' },
-        { id: 12, name: 'Cản sau', category: 'Thân vỏ' },
-        { id: 13, name: 'Gương chiếu hậu', category: 'Ngoại thất' },
-        { id: 14, name: 'Cửa sổ trời', category: 'Ngoại thất' },
-        { id: 15, name: 'Ghế lái điện', category: 'Nội thất' }
-    ]
-
-    // Load all products for EVM Staff when component mounts
+    // Load data from API when component mounts
     useEffect(() => {
-        if (isEVMStaff) {
-            setSelectedProducts(mockProducts)
+        const loadData = async () => {
+            setLoading(true)
+            setError(null)
+            try {
+                // Load products for EVM Staff
+                if (isEVMStaff) {
+                    const productsData = await api.getProducts()
+                    setProducts(productsData.data || [])
+                }
+
+                // Load customers
+                const customersData = await api.getCustomers()
+                setCustomers(customersData.data || [])
+
+                // Load vehicle parts
+                const partsData = await api.getVehicleParts()
+                setVehicleParts(partsData.data || [])
+            } catch (err) {
+                setError('Lỗi khi tải dữ liệu từ server')
+                console.error('Error loading data:', err)
+            } finally {
+                setLoading(false)
+            }
         }
+
+        loadData()
     }, [isEVMStaff])
 
     const handleSearch = () => {
@@ -441,23 +80,23 @@ const CustomerSearch = () => {
         let results = []
         if (searchType === 'product') {
             // Tìm kiếm sản phẩm cho EVM Staff
-            results = mockProducts.filter(p =>
+            results = products.filter(p =>
                 p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 p.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 p.category.toLowerCase().includes(searchQuery.toLowerCase())
             )
         } else if (searchType === 'vin') {
-            results = mockCustomers.filter(c =>
+            results = customers.filter(c =>
                 c.vehicles.some(v => v.vin.includes(searchQuery))
             )
         } else if (searchType === 'phone') {
-            results = mockCustomers.filter(c => c.phone.includes(searchQuery))
+            results = customers.filter(c => c.phone.includes(searchQuery))
         } else if (searchType === 'license') {
-            results = mockCustomers.filter(c =>
+            results = customers.filter(c =>
                 c.vehicles.some(v => v.licensePlate.includes(searchQuery))
             )
         } else if (searchType === 'name') {
-            results = mockCustomers.filter(c =>
+            results = customers.filter(c =>
                 c.name.toLowerCase().includes(searchQuery.toLowerCase())
             )
         }

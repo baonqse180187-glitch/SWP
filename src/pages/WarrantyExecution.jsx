@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { executionAPI, uploadAPI } from '../services/api'
-import { 
+import {
   WrenchScrewdriverIcon,
   CheckIcon,
   ExclamationTriangleIcon,
@@ -204,7 +204,7 @@ const WarrantyExecution = () => {
                   </svg>
                 </div>
               </div>
-              
+
               <select className="input w-48">
                 <option value="">Tất cả trạng thái</option>
                 <option value="parts_received">Đã nhận phụ tùng</option>
@@ -227,11 +227,11 @@ const WarrantyExecution = () => {
                       <h4 className="font-medium text-gray-900">{request.requestNumber}</h4>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
                         {request.status === 'parts_received' ? 'Đã nhận phụ tùng' :
-                         request.status === 'in_progress' ? 'Đang thay thế' :
-                         request.status === 'completed' ? 'Hoàn thành' : request.status}
+                          request.status === 'in_progress' ? 'Đang thay thế' :
+                            request.status === 'completed' ? 'Hoàn thành' : request.status}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center space-x-2">
                       {activeTab === 'received' && request.status === 'approved' && (
                         <button
@@ -243,7 +243,7 @@ const WarrantyExecution = () => {
                           <span>Nhận phụ tùng</span>
                         </button>
                       )}
-                      
+
                       {activeTab === 'received' && request.status === 'parts_received' && (
                         <button
                           onClick={() => handleStartWork(request)}
@@ -254,7 +254,7 @@ const WarrantyExecution = () => {
                           <span>Bắt đầu thực hiện</span>
                         </button>
                       )}
-                      
+
                       {activeTab === 'in_progress' && (
                         <>
                           <button
@@ -279,7 +279,7 @@ const WarrantyExecution = () => {
                           </button>
                         </>
                       )}
-                      
+
                       <button
                         onClick={() => setSelectedRequest(request)}
                         className="btn btn-secondary btn-sm flex items-center space-x-1"
@@ -316,7 +316,7 @@ const WarrantyExecution = () => {
                         <span className="text-sm text-gray-500">{request.progress.percentage}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
+                        <div
                           className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                           style={{ width: `${request.progress.percentage}%` }}
                         ></div>
@@ -334,8 +334,8 @@ const WarrantyExecution = () => {
                   <WrenchScrewdriverIcon className="mx-auto w-12 h-12 text-gray-400" />
                   <p className="mt-2 text-gray-500">
                     {activeTab === 'received' ? 'Không có yêu cầu nào cần nhận phụ tùng' :
-                     activeTab === 'in_progress' ? 'Không có yêu cầu nào đang thực hiện' :
-                     'Không có yêu cầu nào đã hoàn thành'}
+                      activeTab === 'in_progress' ? 'Không có yêu cầu nào đang thực hiện' :
+                        'Không có yêu cầu nào đã hoàn thành'}
                   </p>
                 </div>
               )}
@@ -351,7 +351,7 @@ const WarrantyExecution = () => {
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Cập nhật tiến độ
             </h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -422,12 +422,12 @@ const WarrantyExecution = () => {
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Hoàn tất bảo hành & bàn giao xe
             </h3>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left Column */}
               <div className="space-y-4">
                 <h4 className="font-medium text-gray-900 border-b pb-2">Thông tin hoàn tất</h4>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Mô tả công việc đã thực hiện *
@@ -472,7 +472,7 @@ const WarrantyExecution = () => {
               {/* Right Column */}
               <div className="space-y-4">
                 <h4 className="font-medium text-gray-900 border-b pb-2">Tài liệu bàn giao</h4>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Hình ảnh hoàn tất

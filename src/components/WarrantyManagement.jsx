@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import {
     MagnifyingGlassIcon,
@@ -114,6 +114,9 @@ const WarrantyManagement = () => {
             affectedParts: [10, 6] // Màn hình trung tâm, Điều hòa
         }
     ]
+
+
+
 
     const getStatusBadge = (status) => {
         const statusConfig = {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { assignmentAPI, warrantyAPI } from '../services/api'
-import { 
+import {
   UserGroupIcon,
   ClipboardDocumentListIcon,
   EyeIcon,
@@ -23,10 +23,10 @@ const WarrantyAssignment = () => {
   // Get warranty requests for assignment
   const { data: warrantyRequests, isLoading, refetch } = useQuery(
     ['warrantyRequests', filterStatus, currentPage],
-    () => warrantyAPI.getWarrantyRequests({ 
-      status: filterStatus, 
+    () => warrantyAPI.getWarrantyRequests({
+      status: filterStatus,
       page: currentPage,
-      limit: 10 
+      limit: 10
     }),
     {
       select: (response) => response.data
@@ -53,7 +53,7 @@ const WarrantyAssignment = () => {
 
   // Assignment mutation
   const assignMutation = useMutation(
-    ({ requestId, technicianId, notes }) => 
+    ({ requestId, technicianId, notes }) =>
       assignmentAPI.assignRequest(requestId, technicianId, notes),
     {
       onSuccess: () => {
@@ -67,7 +67,7 @@ const WarrantyAssignment = () => {
   )
 
   const handleSelectRequest = (requestId) => {
-    setSelectedRequests(prev => 
+    setSelectedRequests(prev =>
       prev.includes(requestId)
         ? prev.filter(id => id !== requestId)
         : [...prev, requestId]
@@ -109,9 +109,9 @@ const WarrantyAssignment = () => {
       'completed': { class: 'status-completed', text: 'Hoàn thành' },
       'approved': { class: 'status-approved', text: 'Được chấp thuận' }
     }
-    
+
     const statusInfo = statusMap[status] || { class: 'status-pending', text: status }
-    
+
     return (
       <span className={`status-badge ${statusInfo.class}`}>
         {statusInfo.text}
@@ -125,9 +125,9 @@ const WarrantyAssignment = () => {
       'medium': { class: 'bg-yellow-100 text-yellow-800', text: 'Trung bình' },
       'low': { class: 'bg-green-100 text-green-800', text: 'Thấp' }
     }
-    
+
     const priorityInfo = priorityMap[priority] || { class: 'bg-gray-100 text-gray-800', text: 'Thường' }
-    
+
     return (
       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${priorityInfo.class}`}>
         {priorityInfo.text}
@@ -143,7 +143,7 @@ const WarrantyAssignment = () => {
           <h1 className="text-2xl font-bold text-gray-900">Phân công bảo hành</h1>
           <p className="text-gray-600">Quản lý và phân công yêu cầu bảo hành cho kỹ thuật viên</p>
         </div>
-        
+
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-yellow-50 p-3 rounded-lg text-center">
@@ -185,7 +185,7 @@ const WarrantyAssignment = () => {
                     <option value="in_progress">Đang xử lý</option>
                     <option value="completed">Hoàn thành</option>
                   </select>
-                  
+
                   <div className="text-sm text-gray-500">
                     {selectedRequests.length > 0 && (
                       <span>Đã chọn {selectedRequests.length} yêu cầu</span>
@@ -212,7 +212,7 @@ const WarrantyAssignment = () => {
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Danh sách yêu cầu bảo hành
               </h3>
-              
+
               {isLoading ? (
                 <div className="flex justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
@@ -261,7 +261,7 @@ const WarrantyAssignment = () => {
                           <td>{getStatusBadge(request.status)}</td>
                           <td>{getPriorityBadge(request.priority)}</td>
                           <td>
-                            <button 
+                            <button
                               className="btn btn-secondary btn-sm flex items-center space-x-1"
                               onClick={() => {
                                 // Open detail modal or navigate to detail page
@@ -296,7 +296,7 @@ const WarrantyAssignment = () => {
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Khối lượng công việc
               </h3>
-              
+
               <div className="space-y-4">
                 {workload?.map((tech) => (
                   <div key={tech.id} className="bg-gray-50 rounded-lg p-3">
@@ -311,7 +311,7 @@ const WarrantyAssignment = () => {
                         {tech.specialty}
                       </span>
                     </div>
-                    
+
                     <div className="space-y-1 text-xs text-gray-600">
                       <div className="flex justify-between">
                         <span>Đang xử lý:</span>
@@ -326,15 +326,14 @@ const WarrantyAssignment = () => {
                         <span className="font-medium">{tech.efficiency}%</span>
                       </div>
                     </div>
-                    
+
                     {/* Workload bar */}
                     <div className="mt-2">
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className={`h-2 rounded-full ${
-                            tech.workloadPercentage > 80 ? 'bg-red-500' :
-                            tech.workloadPercentage > 60 ? 'bg-yellow-500' : 'bg-green-500'
-                          }`}
+                        <div
+                          className={`h-2 rounded-full ${tech.workloadPercentage > 80 ? 'bg-red-500' :
+                              tech.workloadPercentage > 60 ? 'bg-yellow-500' : 'bg-green-500'
+                            }`}
                           style={{ width: `${Math.min(tech.workloadPercentage, 100)}%` }}
                         ></div>
                       </div>
@@ -354,18 +353,18 @@ const WarrantyAssignment = () => {
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Thao tác nhanh
               </h3>
-              
+
               <div className="space-y-3">
                 <button className="w-full btn btn-secondary text-left flex items-center space-x-2">
                   <ChartBarIcon className="w-4 h-4" />
                   <span>Xem hiệu suất KTV</span>
                 </button>
-                
+
                 <button className="w-full btn btn-secondary text-left flex items-center space-x-2">
                   <ClipboardDocumentListIcon className="w-4 h-4" />
                   <span>Báo cáo tiến độ</span>
                 </button>
-                
+
                 <button className="w-full btn btn-secondary text-left flex items-center space-x-2">
                   <CalendarIcon className="w-4 h-4" />
                   <span>Lịch làm việc</span>
@@ -383,7 +382,7 @@ const WarrantyAssignment = () => {
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Phân công kỹ thuật viên
             </h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -398,10 +397,10 @@ const WarrantyAssignment = () => {
                   {technicians
                     ?.filter(tech => tech.status === 'active')
                     ?.map((tech) => (
-                    <option key={tech.id} value={tech.id}>
-                      {tech.name} - {tech.specialty} ({workload?.find(w => w.id === tech.id)?.workloadPercentage || 0}% tải)
-                    </option>
-                  ))}
+                      <option key={tech.id} value={tech.id}>
+                        {tech.name} - {tech.specialty} ({workload?.find(w => w.id === tech.id)?.workloadPercentage || 0}% tải)
+                      </option>
+                    ))}
                 </select>
               </div>
 

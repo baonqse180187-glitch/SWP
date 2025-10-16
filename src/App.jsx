@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 // Components
 import Layout from './components/Layout/Layout'
@@ -28,7 +28,9 @@ const queryClient = new QueryClient({
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth()
-  
+
+  console.log('ProtectedRoute - user:', user, 'loading:', loading) // Debug log
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -36,22 +38,24 @@ const ProtectedRoute = ({ children }) => {
       </div>
     )
   }
-  
+
   if (!user) {
     return <Navigate to="/login" replace />
   }
-  
+
   return children
 }
 
 function AppRoutes() {
   const { user } = useAuth()
 
+  console.log('AppRoutes - user:', user) // Debug log
+
   return (
     <Routes>
-      <Route 
-        path="/login" 
-        element={!user ? <LoginPage /> : <Navigate to="/" replace />} 
+      <Route
+        path="/login"
+        element={!user ? <LoginPage /> : <Navigate to="/" replace />}
       />
       <Route
         path="/"

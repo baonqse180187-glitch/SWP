@@ -1,85 +1,36 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { EyeIcon, EyeSlashIcon, WrenchScrewdriverIcon } from '../components/Icons'
-import { usersAPI } from '../services/api'
 
 const LoginPage = () => {
   const { login } = useAuth()
-  const [formData, setFormData] = useState({
-    email: '',
-    username: '',
-    password: ''
-  })
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
   const [error, setError] = useState('')
-  const [apiStatus, setApiStatus] = useState('Đang kiểm tra...')
-  const [usersData, setUsersData] = useState(null)
 
-  // Kết nối backend để lấy danh sách users
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setApiStatus('Đang kết nối...');
-        const response = await usersAPI.getAllUsers();
-        console.log('Danh sách users từ backend:', response.data);
-        setUsersData(response.data);
-        setApiStatus('Kết nối thành công ✅');
-      } catch (error) {
-        console.error('Lỗi khi gọi API users:', error);
-        setApiStatus('Lỗi kết nối ❌');
-
-        // Fallback - sử dụng fetch trực tiếp nếu service API không hoạt động
-        try {
-          const response = await fetch("http://localhost:3001/api/users");
-          const data = await response.json();
-          console.log('Fallback - Users data:', data);
-          setUsersData(data);
-          setApiStatus('Kết nối fallback thành công ✅');
-        } catch (err) {
-          console.error('Lỗi khi gọi API fallback:', err);
-          setApiStatus('Không thể kết nối backend ❌');
-        }
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-    // Clear error when user starts typing
-    if (error) setError('')
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    setMessage('Đang xử lý...')
     setError('')
-
-    // Test backend connection first
-    console.log('🔍 Testing backend connection...')
-    console.log('📍 Backend URL:', import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api')
-    console.log('📝 Form data being sent:', {
-      username: formData.username,
-      email: formData.email,
-      password: formData.password ? '***' : 'empty'
-    })
+    setLoading(true)
 
     try {
-      const result = await login(formData)
-      console.log('🎯 Login result:', result)
+      // Sử dụng login function từ AuthContext để cập nhật state
+      const result = await login({ username, password })
 
-      if (!result.success) {
+      if (result.success) {
+        setMessage('Đăng nhập thành công!')
+      } else {
         setError(result.message)
+        setMessage('')
       }
+
     } catch (error) {
-      console.error('💥 Login exception:', error)
-      setError('Đã xảy ra lỗi khi đăng nhập')
+      setError(error.message || 'Đăng nhập thất bại')
+      setMessage('')
     } finally {
       setLoading(false)
     }
@@ -117,8 +68,8 @@ const LoginPage = () => {
                   required
                   className="input"
                   placeholder="Nhập tên đăng nhập"
-                  value={formData.username}
-                  onChange={handleChange}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   disabled={loading}
                 />
               </div>
@@ -136,8 +87,8 @@ const LoginPage = () => {
                     required
                     className="input pr-10"
                     placeholder="Nhập mật khẩu"
-                    value={formData.password}
-                    onChange={handleChange}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     disabled={loading}
                   />
                   <button
@@ -154,6 +105,22 @@ const LoginPage = () => {
                   </button>
                 </div>
               </div>
+
+              {/* Success Message */}
+              {message && !error && (
+                <div className="bg-green-50 border border-green-200 rounded-md p-4">
+                  <div className="flex">
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-green-800">
+                        Thành công
+                      </h3>
+                      <div className="mt-2 text-sm text-green-700">
+                        {message}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Error Message */}
               {error && (
@@ -175,8 +142,8 @@ const LoginPage = () => {
               <div>
                 <button
                   type="submit"
-                  disabled={loading || !formData.username || !formData.password}
-                  className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${loading || !formData.username || !formData.password
+                  disabled={loading || !username || !password}
+                  className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${loading || !username || !password
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
                     } transition-colors duration-200`}
@@ -194,61 +161,6 @@ const LoginPage = () => {
             </div>
           </div>
         </form>
-
-        {/* Demo Accounts - Updated for new role system */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-          <h3 className="text-sm font-medium text-white mb-4">Tài khoản :</h3>
-          <div className="space-y-2 text-xs text-primary-200">
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="font-medium text-green-300">EVM Admin:</span> evmadmin / admin123
-                <div className="text-[10px] text-primary-300 ml-2">→ Chức năng Hãng sản xuất xe, AI phân tích</div>
-              </div>
-              <button
-                onClick={() => setFormData({ username: 'evmadmin', email: 'evmadmin', password: 'admin123' })}
-                className="px-2 py-1 text-[10px] bg-green-600 text-white rounded hover:bg-green-700"
-              >
-                Fill
-              </button>
-            </div>
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="font-medium text-blue-300">EVM Staff:</span> evmstaff / staff123
-                <div className="text-[10px] text-primary-300 ml-2">→ Quản lý sản phẩm & phụ tùng, Chuỗi cung ứng</div>
-              </div>
-              <button
-                onClick={() => setFormData({ username: 'evmstaff', email: 'evmstaff', password: 'staff123' })}
-                className="px-2 py-1 text-[10px] bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Fill
-              </button>
-            </div>
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="font-medium text-orange-300">SC Staff:</span> scstaff / sc123
-                <div className="text-[10px] text-primary-300 ml-2">→ Tìm VIN, Đăng ký VIN, Tạo yêu cầu BH</div>
-              </div>
-              <button
-                onClick={() => setFormData({ username: 'scstaff', email: 'scstaff', password: 'sc123' })}
-                className="px-2 py-1 text-[10px] bg-orange-600 text-white rounded hover:bg-orange-700"
-              >
-                Fill
-              </button>
-            </div>
-            <div className="flex justify-between items-center">
-              <div>
-                <span className="font-medium text-purple-300">SC Technician:</span> sctech / tech123
-                <div className="text-[10px] text-primary-300 ml-2">→ Thực hiện bảo hành</div>
-              </div>
-              <button
-                onClick={() => setFormData({ username: 'sctech', email: 'sctech', password: 'tech123' })}
-                className="px-2 py-1 text-[10px] bg-purple-600 text-white rounded hover:bg-purple-700"
-              >
-                Fill
-              </button>
-            </div>
-          </div>
-        </div>
 
         {/* Footer */}
         <div className="text-center">

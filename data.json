@@ -1,0 +1,159 @@
+{
+  "vehicles": [
+    {
+      "vin": "VF8-2024-00001",
+      "customerName": "Tr?n Anh Vu",
+      "modelName": "VF 8",
+      "color": "Xanh",
+      "productionYear": 2024,
+      "licensePlate": "51A-12345",
+      "batteryCapacity": 100.0,
+      "image": null,
+      "registrationDate": "2025-10-02",
+      "installedParts": [
+        {
+          "id": 3,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "BAT-VF8-2025-001",
+          "partTypeName": "Pin chính",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-01-15",
+          "warrantyPeriod": "2033-10-02",
+          "customerName": "Tr?n Anh Vu"
+        },
+        {
+          "id": 4,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "BMS-2025-01452",
+          "partTypeName": "BMS",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-01-20",
+          "warrantyPeriod": "2030-10-02",
+          "customerName": "Tr?n Anh Vu"
+        },
+        {
+          "id": 5,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "CHG-2025-00231",
+          "partTypeName": "Bộ sạc",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-01-25",
+          "warrantyPeriod": "2030-10-02",
+          "customerName": "Tr?n Anh Vu"
+        },
+        {
+          "id": 6,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "MTR-2025-00999",
+          "partTypeName": "Động cơ điện",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-02-01",
+          "warrantyPeriod": "2030-10-02",
+          "customerName": "Tr?n Anh Vu"
+        },
+        {
+          "id": 7,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "INV-2025-03333",
+          "partTypeName": "Bộ biến tần",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-02-05",
+          "warrantyPeriod": "2030-10-02",
+          "customerName": "Tr?n Anh Vu"
+        },
+        {
+          "id": 8,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "ECU-2025-05555",
+          "partTypeName": "ECU",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-02-10",
+          "warrantyPeriod": "2028-10-02",
+          "customerName": "Tr?n Anh Vu"
+        },
+        {
+          "id": 9,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "VCU-2025-06666",
+          "partTypeName": "VCU",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-02-12",
+          "warrantyPeriod": "2028-10-02",
+          "customerName": "Tr?n Anh Vu"
+        },
+        {
+          "id": 10,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "ABS-2025-07777",
+          "partTypeName": "Hệ thống phanh",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-02-15",
+          "warrantyPeriod": "2028-10-02",
+          "customerName": "Tr?n Anh Vu"
+        },
+        {
+          "id": 11,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "SRS-2025-08888",
+          "partTypeName": "Túi khí",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-02-18",
+          "warrantyPeriod": "2030-10-02",
+          "customerName": "Tr?n Anh Vu"
+        },
+        {
+          "id": 12,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "CLN-2025-09999",
+          "partTypeName": "Hệ thống làm mát",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-02-20",
+          "warrantyPeriod": "2028-10-02",
+          "customerName": "Tr?n Anh Vu"
+        },
+        {
+          "id": 13,
+          "vin": "VF8-2024-00001",
+          "licensePlate": "51A-12345",
+          "partSerialNumber": "RAD-2025-11111",
+          "partTypeName": "Hệ thống làm mát",
+          "installationDate": "2024-03-01",
+          "productionDate": "2025-02-22",
+          "warrantyPeriod": "2028-10-02",
+          "customerName": "Tr?n Anh Vu"
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "claimId": 1,
+      "vin": "VF8-2024-00001",
+      "licensePlate": "51A-12345",
+      "customerName": "Tr?n Anh Vu",
+      "claimDate": "2025-10-15",
+      "description": "Xe không khởi động được, nghi ngờ lỗi pin.",
+      "status": "Đang xử lý",
+      "partsInvolved": [
+        {
+          "partSerialNumber": "BAT-VF8-2025-001",
+          "partTypeName": "Pin chính"
+        },
+        {
+          "partSerialNumber": "BMS-2025-01452",
+          "partTypeName": "BMS"
+        }
+      ]
+    }
+  ]
+}

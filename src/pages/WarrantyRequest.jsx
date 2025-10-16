@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { warrantyAPI, vehicleAPI, uploadAPI } from '../services/api'
-import { 
+import {
   PlusIcon,
   MagnifyingGlassIcon,
   DocumentIcon,
@@ -89,7 +89,7 @@ const WarrantyRequest = () => {
   const handleFileUpload = async (files, type) => {
     try {
       const uploadPromises = Array.from(files).map(file => {
-        return type === 'image' 
+        return type === 'image'
           ? uploadAPI.uploadImage(file)
           : uploadAPI.uploadDocument(file)
       })
@@ -98,7 +98,7 @@ const WarrantyRequest = () => {
       const fileData = results.map(result => result.data.data)
 
       setUploadedFiles(prev => [...prev, ...fileData])
-      
+
       if (type === 'image') {
         setFormData(prev => ({
           ...prev,
@@ -117,7 +117,7 @@ const WarrantyRequest = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!vehicleInfo || formData.selectedParts.length === 0) {
       return
     }
@@ -154,7 +154,7 @@ const WarrantyRequest = () => {
       <div className="card">
         <div className="p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Bước 1: Tra cứu hồ sơ xe</h3>
-          
+
           <div className="flex space-x-4 mb-4">
             <div className="flex-1">
               <div className="relative">
@@ -209,12 +209,12 @@ const WarrantyRequest = () => {
           <div className="card">
             <div className="p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-6">Bước 2: Tạo yêu cầu bảo hành mới</h3>
-              
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left Column - General Info */}
                 <div className="space-y-6">
                   <h4 className="font-medium text-gray-900 border-b pb-2">Thông tin chung</h4>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Mã yêu cầu (tự sinh)
@@ -269,7 +269,7 @@ const WarrantyRequest = () => {
                 {/* Right Column - Technical Info */}
                 <div className="space-y-6">
                   <h4 className="font-medium text-gray-900 border-b pb-2">Thông tin kỹ thuật</h4>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Phụ tùng cần bảo hành
