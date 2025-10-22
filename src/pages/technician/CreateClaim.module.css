@@ -1,0 +1,453 @@
+.container {
+    padding: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 8px 0;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 16px;
+}
+
+/* Steps Indicator */
+.stepsIndicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.stepsIndicator::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: #e5e7eb;
+    z-index: 0;
+}
+
+.stepItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.stepIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    border: 3px solid #e5e7eb;
+}
+
+.stepItem.active .stepIcon {
+    background: #14b8a6;
+    color: white;
+    border-color: #14b8a6;
+    transform: scale(1.1);
+}
+
+.stepItem.completed .stepIcon {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+.stepTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-align: center;
+}
+
+.stepItem.active .stepTitle {
+    color: #14b8a6;
+}
+
+.stepItem.completed .stepTitle {
+    color: #10b981;
+}
+
+/* Error Alert */
+.errorAlert {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    border-left: 4px solid #ef4444;
+}
+
+/* Form Card */
+.formCard {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stepContent {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stepHeading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 24px;
+}
+
+/* Form Groups */
+.formGroup {
+    margin-bottom: 24px;
+}
+
+.formGroup label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.required {
+    color: #ef4444;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+    outline: none;
+    border-color: #14b8a6;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+}
+
+.formGroup textarea {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* VIN Input */
+.vinInput {
+    display: flex;
+    gap: 12px;
+}
+
+.vinInput input {
+    flex: 1;
+}
+
+.vinInput button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #14b8a6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.vinInput button:hover:not(:disabled) {
+    background: #0f766e;
+}
+
+.vinInput button:disabled {
+    background: #d1d5db;
+    cursor: not-allowed;
+}
+
+/* Vehicle Info */
+.vehicleInfo {
+    background: #f0fdf4;
+    border: 2px solid #86efac;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.vehicleInfo h3 {
+    color: #065f46;
+    margin: 0 0 16px 0;
+    font-size: 18px;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.infoGrid div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.infoGrid span {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.infoGrid strong {
+    color: #1f2937;
+    font-size: 16px;
+}
+
+.warrantyActive {
+    color: #059669 !important;
+}
+
+/* Upload Area */
+.uploadArea {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.fileInput {
+    display: none;
+}
+
+.uploadLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    background: #f9fafb;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.uploadLabel:hover {
+    border-color: #14b8a6;
+    background: #f0fdfa;
+}
+
+.uploadIcon {
+    font-size: 48px;
+    color: #14b8a6;
+    margin-bottom: 16px;
+}
+
+.uploadLabel p {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 8px 0;
+}
+
+.uploadLabel span {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* File List */
+.fileList {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.fileList h4 {
+    margin: 0 0 12px 0;
+    color: #374151;
+    font-size: 14px;
+}
+
+.fileItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.fileItem span {
+    font-size: 14px;
+    color: #374151;
+}
+
+.fileItem button {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: #fee2e2;
+    color: #991b1b;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.fileItem button:hover {
+    background: #fecaca;
+    transform: scale(1.1);
+}
+
+/* Navigation */
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btnSecondary,
+.btnPrimary,
+.btnSuccess {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btnSecondary {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btnSecondary:hover {
+    background: #e5e7eb;
+}
+
+.btnPrimary {
+    background: #14b8a6;
+    color: white;
+}
+
+.btnPrimary:hover {
+    background: #0f766e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+}
+
+.btnSuccess {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.btnSuccess:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btnSuccess:disabled {
+    background: #d1d5db;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stepsIndicator {
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .stepsIndicator::before {
+        display: none;
+    }
+
+    .stepItem {
+        flex: 0 0 calc(50% - 8px);
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .infoGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .vinInput {
+        flex-direction: column;
+    }
+
+    .navigation {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btnSecondary,
+    .btnPrimary,
+    .btnSuccess {
+        width: 100%;
+        justify-content: center;
+    }
+}

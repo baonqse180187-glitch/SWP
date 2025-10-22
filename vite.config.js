@@ -11,14 +11,15 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
+    port: 5173, // Match với app.frontend.url trong backend
+    host: '0.0.0.0', // Allow external access
     open: true,
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        // Không rewrite path vì backend đã có /api prefix
       }
     }
   },

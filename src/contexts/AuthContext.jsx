@@ -1,104 +1,185 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+﻿import React, { createContext, useContext, useState, useEffect } from 'react'
+import { authAPI } from '../api'
+import { ROLES, ROLE_PERMISSIONS } from '../utils/constants'
 
-const AuthContext = createContext();
+const AuthContext = createContext(null)
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  useEffect(() => { checkAuth() }, [])
 
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
-
-    if (token && userData) {
-      setUser(JSON.parse(userData));
+  // Helper function: Decode JWT token to get user info
+  const decodeJWT = (token) => {
+    try {
+      const base64Url = token.split('.')[1]
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      )
+      return JSON.parse(jsonPayload)
+    } catch (error) {
+      console.error('Failed to decode JWT:', error)
+      return null
     }
-    setLoading(false);
-  }, []);
+  }
+
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem('accessToken')
+      if (token) {
+        // Decode JWT để lấy thông tin user
+        const decodedToken = decodeJWT(token)
+
+        if (decodedToken) {
+          // Kiểm tra token có hết hạn không
+          const currentTime = Date.now() / 1000
+          if (decodedToken.exp && decodedToken.exp < currentTime) {
+            console.log('Token đã hết hạn')
+            localStorage.clear()
+            return
+          }
+
+          const userData = {
+            userId: decodedToken?.userId,
+            username: decodedToken?.sub,
+            email: decodedToken?.email,
+            fullName: decodedToken?.fullName,
+            role: {
+              roleName: decodedToken?.role || decodedToken?.scope
+            }
+          }
+          setUser(userData)
+        } else {
+          localStorage.clear()
+        }
+      }
+    } catch (error) {
+      console.error('Check auth error:', error)
+      localStorage.clear()
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const login = async (credentials) => {
     try {
-      // Gọi API login
-      const response = await fetch('http://localhost:3001/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
+      console.log('Đang gửi request login...', credentials)
+      const response = await authAPI.login(credentials)
+      console.log('Login response:', response.data)
 
-      const data = await response.json();
+      // Backend trả về: { code: 0, result: { token, authenticated } }
+      const result = response.data?.result
+      const token = result?.token
 
-      if (!response.ok) {
-        return {
-          success: false,
-          message: data.message || 'Đăng nhập thất bại'
-        };
+      if (!token) {
+        console.error('❌ Không có token trong response:', response.data)
+        throw new Error('No access token received')
       }
 
-      // Lưu token và user data từ response structure mới
-      localStorage.setItem('authToken', data.data.token);
-      localStorage.setItem('userData', JSON.stringify(data.data.user));
+      console.log('Token nhận được, length:', token.length)
+      localStorage.setItem('accessToken', token)
 
-      setUser(data.data.user);
+      // Decode JWT để lấy thông tin user từ token
+      const decodedToken = decodeJWT(token)
+      console.log('Decoded token:', decodedToken)
 
-      return {
-        success: true,
-        message: data.message,
-        user: data.data.user,
-        token: data.data.token
-      };
+      // Tạo object user từ thông tin trong token
+      const userData = {
+        userId: decodedToken?.userId,
+        username: decodedToken?.sub,
+        email: decodedToken?.email,
+        fullName: decodedToken?.fullName,
+        role: {
+          roleName: decodedToken?.role || decodedToken?.scope
+        }
+      }
 
+      console.log('User data:', userData)
+      setUser(userData)
+
+      return { success: true, user: userData }
     } catch (error) {
+      console.error('Login error:', error)
+      console.error('Error response:', error.response?.data)
       return {
         success: false,
-        message: 'Lỗi kết nối đến server'
-      };
+        error: error.response?.data?.message || error.message || 'Đăng nhập thất bại'
+      }
     }
-  };
+  }
 
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
-    setUser(null);
-  };
+  const logout = async () => {
+    try { await authAPI.logout() } finally { localStorage.clear(); setUser(null) }
+  }
 
-  // Kiểm tra xem user có quyền truy cập không
-  const hasPermission = (permission) => {
-    if (!user) return false;
+  const forgotPassword = async (email) => {
+    try {
+      await authAPI.forgotPassword(email)
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: error.response?.data?.message }
+    }
+  }
 
-    // Admin có tất cả quyền
-    if (user.role === 'EVM_ADMIN') return true;
+  const resetPassword = async (token, newPassword) => {
+    try {
+      await authAPI.resetPassword(token, newPassword)
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: error.response?.data?.message }
+    }
+  }
 
-    // Định nghĩa quyền cho từng role
-    const rolePermissions = {
-      'EVM_STAFF': ['manage_products', 'view_reports', 'manage_supply_chain'],
-      'SC_STAFF': ['find_vin', 'register_vin', 'create_warranty'],
-      'SC_TECHNICIAN': ['execute_warranty', 'update_warranty_status']
-    };
+  const hasPermission = (p) => {
+    const roleName = user?.role?.roleName || user?.role
+    return roleName && ROLE_PERMISSIONS[roleName]?.includes(p)
+  }
 
-    return rolePermissions[user.role]?.includes(permission) || false;
-  };
+  const hasRole = (r) => {
+    const roleName = user?.role?.roleName || user?.role
+    // Backend trả về "ROLE_ADMIN", so sánh với "ADMIN"
+    const roleWithoutPrefix = roleName?.replace('ROLE_', '')
+    return roleWithoutPrefix === r || roleName === r
+  }
+
+  const hasAnyRole = (roles) => {
+    const roleName = user?.role?.roleName || user?.role
+    // Backend trả về "ROLE_ADMIN", so sánh với "ADMIN"
+    const roleWithoutPrefix = roleName?.replace('ROLE_', '')
+    return roles.some(r => roleWithoutPrefix === r || roleName === r)
+  }
 
   const value = {
     user,
+    loading,
+    isAuthenticated: !!user,
+    // Backend trả về "ROLE_ADMIN", loại bỏ prefix "ROLE_"
+    role: (user?.role?.roleName || user?.role)?.replace('ROLE_', ''),
     login,
     logout,
-    loading,
-    hasPermission
-  };
+    forgotPassword,
+    resetPassword,
+    hasPermission,
+    hasRole,
+    hasAnyRole
+  }
 
   return (
     <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
-  );
-};
+  )
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (!context) throw new Error('useAuth must be used within AuthProvider')
+  return context
+}
+
+export { ROLES }

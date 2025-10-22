@@ -1,92 +1,90 @@
-import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-// Components
-import Layout from './components/Layout/Layout'
-import LoginPage from './pages/LoginPage'
-import HomePage from './pages/HomePage'
-import CustomerManagement from './pages/CustomerManagement'
-import WarrantyRequest from './pages/WarrantyRequest'
-import WarrantyAssignment from './pages/WarrantyAssignment'
-import WarrantyExecution from './pages/WarrantyExecution'
-
-// Auth Context
-import { AuthProvider, useAuth } from './contexts/AuthContext'
-
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 minutes
-    },
-  },
-})
-
-// Protected Route Component
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth()
-
-  console.log('ProtectedRoute - user:', user, 'loading:', loading) // Debug log
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />
-  }
-
-  return children
-}
-
-function AppRoutes() {
-  const { user } = useAuth()
-
-  console.log('AppRoutes - user:', user) // Debug log
-
-  return (
-    <Routes>
-      <Route
-        path="/login"
-        element={!user ? <LoginPage /> : <Navigate to="/" replace />}
-      />
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<HomePage />} />
-        <Route path="customer-management" element={<CustomerManagement />} />
-        <Route path="warranty-request" element={<WarrantyRequest />} />
-        <Route path="warranty-assignment" element={<WarrantyAssignment />} />
-        <Route path="warranty-execution" element={<WarrantyExecution />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  )
-}
+﻿import React from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
+import { ROLES } from './utils/constants'
+import ProtectedRoute from './components/common/ProtectedRoute'
+import LoginForm from './pages/auth/LoginForm'
+import ForgotPasswordForm from './pages/auth/ForgotPasswordForm'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import UserManagement from './pages/admin/UserManagement'
+import Analytics from './pages/admin/Analytics'
+import EVMDashboard from './pages/evm-staff/EVMDashboard'
+import SCStaffDashboard from './pages/sc-staff/SCStaffDashboard'
+import TechnicianDashboard from './pages/technician/TechnicianDashboard'
+import MyClaims from './pages/technician/MyClaims'
+import CreateClaim from './pages/technician/CreateClaim'
+import MainLayout from './components/layout/MainLayout'
+import './index.css'
+import Sidebar from './components/layout/Sidebar'
+import MainContent from './components/layout/MainContent'
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router>
-          <div className="App">
-            <AppRoutes />
-          </div>
-        </Router>
-      </AuthProvider>
-    </QueryClientProvider>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/login' element={<LoginForm />} />
+          <Route path='/forgot-password' element={<ForgotPasswordForm />} />
+
+          <Route path='/admin/*' element={
+            <ProtectedRoute allowedRoles={[ROLES.ADMIN]}>
+              <MainLayout>
+                <Routes>
+                  <Route path='dashboard' element={<AdminDashboard />} />
+                  <Route path='users' element={<UserManagement />} />
+                  <Route path='analytics' element={<Analytics />} />
+                  <Route path='*' element={<Navigate to='/admin/dashboard' replace />} />
+                </Routes>
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path='/evm/*' element={
+            <ProtectedRoute allowedRoles={[ROLES.EVM_STAFF]}>
+              <MainLayout>
+                <Routes>
+                  <Route path='dashboard' element={<EVMDashboard />} />
+                  <Route path='*' element={<Navigate to='/evm/dashboard' replace />} />
+                </Routes>
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path='/sc-staff/*' element={
+            <ProtectedRoute allowedRoles={[ROLES.SC_STAFF]}>
+              <MainLayout>
+                <Routes>
+                  <Route
+                    path='dashboard'
+                    element={<SCStaffDashboard />}
+                  />
+                  <Route
+                    path='*'
+                    element={<Navigate to='/sc-staff/dashboard' replace />}
+                  />
+                </Routes>
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path='/technician/*' element={
+            <ProtectedRoute allowedRoles={[ROLES.SC_TECHNICIAN]}>
+              <MainLayout>
+                <Routes>
+                  <Route path='dashboard' element={<TechnicianDashboard />} />
+                  <Route path='claims' element={<MyClaims />} />
+                  <Route path='claims/new' element={<CreateClaim />} />
+                  <Route path='*' element={<Navigate to='/technician/dashboard' replace />} />
+                </Routes>
+              </MainLayout>
+            </ProtectedRoute>
+          } />
+
+          <Route path='/' element={<Navigate to='/login' replace />} />
+          <Route path='*' element={<Navigate to='/login' replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
