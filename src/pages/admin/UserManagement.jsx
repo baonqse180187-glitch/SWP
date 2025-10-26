@@ -13,7 +13,7 @@ const UserManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('ALL');
     const [showModal, setShowModal] = useState(false);
-    const [modalMode, setModalMode] = useState('create'); // 'create' or 'edit'
+    const [modalMode, setModalMode] = useState('create');
     const [selectedUser, setSelectedUser] = useState(null);
     const [formData, setFormData] = useState({
         username: '',
@@ -21,7 +21,7 @@ const UserManagement = () => {
         fullName: '',
         password: '',
         phone: '',
-        roleId: 4, // Default to SC_STAFF (roleId: 4)
+        roleId: 4,
         serviceCenterId: null,
         address: ''
     });
@@ -89,9 +89,9 @@ const UserManagement = () => {
     const getRoleBadge = (role) => {
         const config = {
             ADMIN: { label: 'Admin', className: styles.roleAdmin },
-            EVM_STAFF: { label: 'EVM Staff', className: styles.roleEVM },
-            SC_STAFF: { label: 'SC Staff', className: styles.roleSC },
-            SC_TECHNICIAN: { label: 'Technician', className: styles.roleTech }
+            EVM_STAFF: { label: 'EVM Staff', className: styles.roleEVM_Staff },
+            SC_STAFF: { label: 'SC Staff', className: styles.roleSC_Staff },
+            SC_TECHNICIAN: { label: 'Technician', className: styles.roleTechnician }
         };
         const { label, className } = config[role] || config.ADMIN;
         return <span className={`${styles.roleBadge} ${className}`}>{getRoleIcon(role)} {label}</span>;
@@ -203,14 +203,14 @@ const UserManagement = () => {
 
                 console.log('Creating user with data:', userData);
                 await userAPI.createUser(userData);
-                alert('✅ Tạo user thành công!');
+                alert('Tạo user thành công!');
             } else {
                 // For update, remove password if empty
                 if (!userData.password) {
                     delete userData.password;
                 }
                 await userAPI.updateUser(selectedUser.id, userData);
-                alert('✅ Cập nhật user thành công!');
+                alert('Cập nhật user thành công!');
             }
 
             handleCloseModal();
@@ -218,7 +218,7 @@ const UserManagement = () => {
         } catch (error) {
             console.error('Error saving user:', error);
             const errorMsg = error.response?.data?.message || error.message;
-            alert('❌ Có lỗi xảy ra: ' + errorMsg);
+            alert('Có lỗi xảy ra: ' + errorMsg);
         } finally {
             setLoading(false);
         }
@@ -230,11 +230,11 @@ const UserManagement = () => {
         try {
             setLoading(true);
             await userAPI.deleteUser(userId);
-            alert('✅ Xóa user thành công!');
+            alert('Xóa user thành công!');
             fetchUsers();
         } catch (error) {
             console.error('Error deleting user:', error);
-            alert('❌ Không thể xóa user: ' + (error.response?.data?.message || error.message));
+            alert('Không thể xóa user: ' + (error.response?.data?.message || error.message));
         } finally {
             setLoading(false);
         }
@@ -261,11 +261,15 @@ const UserManagement = () => {
             {/* Header */}
             <div className={styles.header}>
                 <div>
-                    <h1 className={styles.title}>Quản lý Users</h1>
-                    <p className={styles.subtitle}>Quản lý tài khoản và phân quyền người dùng</p>
+                    <h1 className={styles.title}>
+                        Quản lý Users
+                    </h1>
+                    <p className={styles.subtitle}>
+                        Quản lý tài khoản và phân quyền người dùng
+                    </p>
                 </div>
                 <button onClick={() => handleOpenModal('create')} className={styles.createButton}>
-                    <FaPlus /> Tạo User Mới
+                    <FaPlus /> Tạo User
                 </button>
             </div>
 
@@ -383,7 +387,12 @@ const UserManagement = () => {
                                 </div>
 
                                 <div className={styles.formGroup}>
-                                    <label>Email <span className={styles.required}>*</span></label>
+                                    <label>
+                                        Email
+                                        <span className={styles.required}>
+                                            *
+                                        </span>
+                                    </label>
                                     <input
                                         type="email"
                                         value={formData.email}
@@ -394,7 +403,12 @@ const UserManagement = () => {
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label>Họ và tên <span className={styles.required}>*</span></label>
+                                <label>
+                                    Họ và tên
+                                    <span className={styles.required}>
+                                        *
+                                    </span>
+                                </label>
                                 <input
                                     type="text"
                                     value={formData.fullName}
