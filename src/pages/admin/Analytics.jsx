@@ -8,7 +8,7 @@ import {
     FaDollarSign, FaTools, FaCar, FaExclamationTriangle
 } from 'react-icons/fa';
 import { reportAPI } from '../../api';
-import styles from './Analytics.module.css';
+import styles from './css/Analytics.module.css';
 
 const Analytics = () => {
     const [loading, setLoading] = useState(true);

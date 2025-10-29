@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>API Test - User Management</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            border-radius: 4px;
+        }
+
+        pre {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .error {
+            border-left-color: #f44336;
+        }
+
+        .error pre {
+            background: #ffebee;
+            color: #c62828;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔍 User Management API Tester</h1>
+
+        <div>
+            <button onclick="checkAuth()">1. Check Auth</button>
+            <button onclick="getAllUsers()">2. Get All Users</button>
+            <button onclick="getMyInfo()">3. Get My Info</button>
+            <button onclick="testRegister()">4. Test Register (Create Mock User)</button>
+        </div>
+
+        <div id="result" class="result" style="display:none;">
+            <h3>Result:</h3>
+            <pre id="output"></pre>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+
+        function showResult(data, isError = false) {
+            const resultDiv = document.getElementById('result');
+            const outputPre = document.getElementById('output');
+            resultDiv.style.display = 'block';
+            resultDiv.className = isError ? 'result error' : 'result';
+            outputPre.textContent = JSON.stringify(data, null, 2);
+        }
+
+        function getToken() {
+            return localStorage.getItem('accessToken');
+        }
+
+        async function checkAuth() {
+            const token = getToken();
+            const user = localStorage.getItem('user');
+
+            showResult({
+                hasToken: !!token,
+                token: token ? token.substring(0, 30) + '...' : null,
+                user: user ? JSON.parse(user) : null
+            });
+        }
+
+        async function getAllUsers() {
+            try {
+                const response = await fetch(`${API_BASE}/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${getToken()}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                showResult({
+                    status: response.status,
+                    ok: response.ok,
+                    data: data
+                }, !response.ok);
+
+            } catch (error) {
+                showResult({
+                    error: error.message,
+                    stack: error.stack
+                }, true);
+            }
+        }
+
+        async function getMyInfo() {
+            try {
+                const response = await fetch(`${API_BASE}/users/myInfo`, {
+                    headers: {
+                        'Authorization': `Bearer ${getToken()}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                showResult({
+                    status: response.status,
+                    ok: response.ok,
+                    data: data
+                }, !response.ok);
+
+            } catch (error) {
+                showResult({
+                    error: error.message,
+                    stack: error.stack
+                }, true);
+            }
+        }
+
+        async function testRegister() {
+            const mockUser = {
+                username: `test_user_${Date.now()}`,
+                password: "Test123456",
+                fullName: "Test User",
+                email: `test${Date.now()}@example.com`,
+                phone: "0900000000",
+                roleID: 2, // EVM_STAFF
+                serviceCenterID: 1
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/users/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${getToken()}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(mockUser)
+                });
+
+                const data = await response.json();
+
+                showResult({
+                    status: response.status,
+                    ok: response.ok,
+                    requestData: mockUser,
+                    responseData: data
+                }, !response.ok);
+
+            } catch (error) {
+                showResult({
+                    error: error.message,
+                    stack: error.stack
+                }, true);
+            }
+        }
+    </script>
+</body>
+
+</html>

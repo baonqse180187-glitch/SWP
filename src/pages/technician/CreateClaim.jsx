@@ -5,7 +5,7 @@ import {
     FaCheckCircle, FaArrowRight, FaArrowLeft
 } from 'react-icons/fa';
 import { vehicleAPI, warrantyClaimAPI } from '../../api';
-import styles from './CreateClaim.module.css';
+import styles from './css/CreateClaim.module.css';
 
 const CreateClaim = () => {
     const navigate = useNavigate();
@@ -154,7 +154,7 @@ const CreateClaim = () => {
                         <div
                             key={step.number}
                             className={`${styles.stepItem} ${currentStep === step.number ? styles.active :
-                                    currentStep > step.number ? styles.completed : ''
+                                currentStep > step.number ? styles.completed : ''
                                 }`}
                         >
                             <div className={styles.stepIcon}>

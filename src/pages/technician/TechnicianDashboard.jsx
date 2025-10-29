@@ -5,7 +5,7 @@ import {
   FaPlus, FaTools, FaExclamationTriangle, FaChartLine
 } from 'react-icons/fa';
 import { warrantyClaimAPI } from '../../api';
-import styles from './TechnicianDashboard.module.css';
+import styles from './css/TechnicianDashboard.module.css';
 
 const TechnicianDashboard = () => {
   const [stats, setStats] = useState({

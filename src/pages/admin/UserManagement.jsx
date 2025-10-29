@@ -4,7 +4,7 @@ import {
     FaUserShield, FaUserCog, FaUserTie, FaTools
 } from 'react-icons/fa';
 import { userAPI, serviceCenterAPI } from '../../api';
-import styles from './UserManagement.module.css';
+import styles from './css/UserManagement.module.css';
 
 const UserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -36,13 +36,57 @@ const UserManagement = () => {
             setLoading(true);
             const params = roleFilter !== 'ALL' ? { role: roleFilter } : {};
             const response = await userAPI.getUsers(params);
-            setUsers(response.data.result?.content || []);
+
+            console.log('Full API Response:', response);
+            console.log('Response data:', response.data);
+
+            // Backend response structure: { code: 200, message: "...", result: [...] }
+            let userData = [];
+
+            if (response.data.result) {
+                userData = Array.isArray(response.data.result)
+                    ? response.data.result
+                    : (response.data.result.content || []);
+            } else if (Array.isArray(response.data)) {
+                userData = response.data;
+            }
+
+            console.log('Parsed users:', userData);
+            console.log('Number of users:', userData.length);
+
+            // Map backend fields to frontend expected format
+            const mappedUsers = userData.map(user => ({
+                id: user.userID,
+                username: user.username,
+                fullName: user.fullName,
+                email: user.email,
+                phone: user.phone,
+                image: user.image,
+                role: user.role?.roleName || 'UNKNOWN',
+                roleId: user.role?.roleID,
+                serviceCenter: {
+                    id: user.serviceCenter?.serviceCenterID,
+                    name: user.serviceCenter?.name,
+                    phone: user.serviceCenter?.phone,
+                    email: user.serviceCenter?.email,
+                    address: user.serviceCenter?.address
+                },
+                createdDate: user.createdDate || new Date().toISOString()
+            }));
+
+            console.log('Mapped users:', mappedUsers);
+            setUsers(mappedUsers);
         } catch (error) {
-            console.error('❌ Error fetching users:', error);
-            // Mock data
-            setUsers([
-                { id: 1, username: 'admin', fullName: 'System Admin', email: 'admin@evhub.com', role: 'ADMIN', createdDate: '2024-01-01' },
-            ]);
+            console.error('Error fetching users:', error);
+            console.error('Error response:', error.response);
+            console.error('Error data:', error.response?.data);
+
+            // Set empty array on error
+            setUsers([]);
+
+            // Show user-friendly error
+            const errorMsg = error.response?.data?.message || error.message;
+            console.error('Failed to fetch users:', errorMsg);
         } finally {
             setLoading(false);
         }
@@ -53,23 +97,28 @@ const UserManagement = () => {
             const response = await serviceCenterAPI.getServiceCenters();
             console.log('Service Centers API Response:', response.data);
 
-            // Try different possible response structures
-            let centers = response.data.result?.content
-                || response.data.result
-                || response.data
-                || [];
+            // Backend response: { code: 200, message: "...", result: [...] }
+            let centers = [];
 
-            // Map serviceCenterID to id if needed
-            centers = centers.map(sc => ({
-                id: sc.id || sc.serviceCenterID,
+            if (response.data.result) {
+                centers = Array.isArray(response.data.result)
+                    ? response.data.result
+                    : (response.data.result.content || []);
+            } else if (Array.isArray(response.data)) {
+                centers = response.data;
+            }
+
+            // Map serviceCenterID to id
+            const mappedCenters = centers.map(sc => ({
+                id: sc.serviceCenterID || sc.id,
                 name: sc.name,
                 address: sc.address,
                 phone: sc.phone,
                 email: sc.email
             }));
 
-            console.log('Parsed service centers:', centers);
-            setServiceCenters(centers);
+            console.log('Mapped service centers:', mappedCenters);
+            setServiceCenters(mappedCenters);
         } catch (error) {
             console.error('Error fetching service centers:', error);
             setServiceCenters([]);
@@ -123,13 +172,14 @@ const UserManagement = () => {
         setModalMode(mode);
         setSelectedUser(user);
         if (mode === 'edit' && user) {
+            // Map user data (đã được mapped từ backend)
             setFormData({
                 username: user.username || '',
                 email: user.email || '',
                 fullName: user.fullName || '',
                 password: '',
-                phone: user.phone || user.phoneNumber || '',
-                roleId: getRoleId(user.role),
+                phone: user.phone || '',
+                roleId: user.roleId || getRoleId(user.role),
                 serviceCenterId: user.serviceCenter?.id || null,
                 address: user.address || ''
             });
@@ -185,19 +235,19 @@ const UserManagement = () => {
                 // Validate password format
                 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/;
                 if (!passwordRegex.test(userData.password)) {
-                    alert('❌ Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ và số!');
+                    alert('Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ và số!');
                     return;
                 }
 
                 // Validate phone format (10-11 digits)
                 if (userData.phone && !/^[0-9]{10,11}$/.test(userData.phone)) {
-                    alert('❌ Số điện thoại phải có 10-11 chữ số!');
+                    alert('Số điện thoại phải có 10-11 chữ số!');
                     return;
                 }
 
                 // Validate service center for SC roles
                 if ([3, 4].includes(userData.roleId) && !userData.serviceCenterId) {
-                    alert('❌ Vui lòng chọn Service Center cho SC Staff/Technician!');
+                    alert('Vui lòng chọn Service Center cho SC Staff/Technician!');
                     return;
                 }
 
@@ -332,11 +382,16 @@ const UserManagement = () => {
                                         <td>
                                             <span className={styles.username}>{user.username}</span>
                                         </td>
-                                        <td>{user.fullName}</td>
-                                        <td>{user.email}</td>
+                                        <td>{user.fullName || '-'}</td>
+                                        <td>{user.email || '-'}</td>
                                         <td>{getRoleBadge(user.role)}</td>
                                         <td>{user.serviceCenter?.name || '-'}</td>
-                                        <td>{new Date(user.createdDate).toLocaleDateString('vi-VN')}</td>
+                                        <td>
+                                            {user.createdDate ?
+                                                new Date(user.createdDate).toLocaleDateString('vi-VN') :
+                                                '-'
+                                            }
+                                        </td>
                                         <td>
                                             <div className={styles.actions}>
                                                 <button

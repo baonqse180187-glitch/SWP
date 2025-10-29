@@ -7,8 +7,10 @@ export const authAPI = {
     introspect: (token) => axiosInstance.post('/auth/introspect', { token }),
     refreshToken: (refreshToken) => axiosInstance.post('/auth/refresh', { refreshToken }),
     getCurrentUser: () => axiosInstance.get('/users/myInfo'),
-    forgotPassword: (email) => axiosInstance.post('/auth/forgot-password', { email }),
-    resetPassword: (token, newPassword) => axiosInstance.post('/auth/reset-password', { token, newPassword }),
+    // Reset Password Flow
+    forgotPassword: (email) => axiosInstance.post('/users/forgot-password', { email }),
+    verifyOtp: (data) => axiosInstance.post('/users/verify-otp', data), // { email, otp }
+    resetPassword: (data) => axiosInstance.post('/users/reset-password', data), // { email, otp, newPassword }
 }
 
 // ==================== USER API ====================

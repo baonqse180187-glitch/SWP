@@ -5,7 +5,7 @@ import {
     FaTimesCircle, FaTools, FaEye, FaPlus
 } from 'react-icons/fa';
 import { warrantyClaimAPI } from '../../api';
-import styles from './MyClaims.module.css';
+import styles from './css/MyClaims.module.css';
 
 const MyClaims = () => {
     const [searchParams, setSearchParams] = useSearchParams();

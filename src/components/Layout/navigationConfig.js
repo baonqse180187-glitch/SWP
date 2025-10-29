@@ -5,19 +5,18 @@ export const getNavigationItems = (hasRole) => {
         return [
             { icon: '📊', text: 'Dashboard', path: '/admin/dashboard' },
             { icon: '👥', text: 'Quản Lý Users', path: '/admin/users' },
-            { icon: '📈', text: 'Báo Cáo & Phân Tích', path: '/admin/analytics' },
-            { icon: '🔧', text: 'Cài Đặt', path: '/admin/settings' },
+            { icon: '�', text: 'Quản Lý Sản Phẩm', path: '/admin/products' },
+            { icon: '✅', text: 'Phê Duyệt Bảo Hành', path: '/admin/warranty-approval' },
+            { icon: '�', text: 'Báo Cáo & Phân Tích', path: '/admin/analytics' },
         ];
     }
 
     if (hasRole(ROLES.EVM_STAFF)) {
         return [
             { icon: '📊', text: 'Dashboard', path: '/evm/dashboard' },
-            { icon: '📦', text: 'Quản Lý Sản Phẩm', path: '/evm/products' },
-            { icon: '🔩', text: 'Quản Lý Phụ Tùng', path: '/evm/parts' },
-            { icon: '✅', text: 'Phê Duyệt Bảo Hành', path: '/evm/approvals' },
-            { icon: '📢', text: 'Chiến Dịch Recall', path: '/evm/campaigns' },
-            { icon: '📈', text: 'Báo Cáo', path: '/evm/reports' },
+            { icon: '✅', text: 'Phê Duyệt Bảo Hành', path: '/evm/warranty-approval' },
+            { icon: '�', text: 'Quản Lý Sản Phẩm', path: '/evm/products' },
+            { icon: '📢', text: 'Quản Lý Chiến Dịch', path: '/evm/campaigns' },
         ];
     }
 

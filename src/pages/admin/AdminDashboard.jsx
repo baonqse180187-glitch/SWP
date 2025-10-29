@@ -6,7 +6,7 @@ import {
   FaUserShield, FaBuilding, FaClipboardList, FaTachometerAlt
 } from 'react-icons/fa'
 import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-import styles from './AdminDashboard.module.css'
+import styles from './css/AdminDashboard.module.css'
 
 export default function AdminDashboard() {
   const { user } = useAuth()

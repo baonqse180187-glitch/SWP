@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { FaEnvelope, FaLock, FaPaperPlane, FaArrowLeft, FaCheckCircle, FaExclamationCircle, FaInfoCircle } from 'react-icons/fa'
-import styles from './ForgotPasswordForm.module.css'
+import styles from './css/ForgotPasswordForm.module.css'
 
 export default function ForgotPasswordForm() {
   const { forgotPassword } = useAuth()

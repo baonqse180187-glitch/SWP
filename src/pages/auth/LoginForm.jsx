@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { ROLE_HOME_ROUTES } from '../../utils/constants'
 import { FaUser, FaLock, FaFacebookF, FaTwitter, FaLinkedinIn } from 'react-icons/fa'
-import styles from './LoginForm.module.css'
+import styles from './css/LoginForm.module.css'
 
 export default function LoginForm() {
   const navigate = useNavigate()
@@ -96,7 +96,7 @@ export default function LoginForm() {
               </div>
 
               <div className={styles.forgotPassword}>
-                <Link to='/forgot-password' className={styles.forgotLink}>
+                <Link to='/reset-password' className={styles.forgotLink}>
                   Forgot your password?
                 </Link>
               </div>
